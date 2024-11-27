@@ -57,7 +57,7 @@ Se investigaron relaciones entre pares de variables para identificar correlacion
 
 ## ✅ Conclusiones y Recomendaciones del Proyecto
 
-** 1) Duración de Streams:**
+**1) Duración de Streams:**
 Aunque la duración promedio no mostró una correlación significativa con variables como espectadores o seguidores, los streams de 4 a 5 horas parecen ser óptimos para maximizar la exposición y mantener el interés del público.
 
 **2) Juegos Más Populares:**
