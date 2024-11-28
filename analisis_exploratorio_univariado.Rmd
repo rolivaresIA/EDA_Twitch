@@ -1,0 +1,154 @@
+---
+title: "Análisis exploratorio de datos en Twitch"
+output: html_notebook
+knitr:
+  opts_chunk:
+    echo: true   # Mostrar código
+    message: false # No mostrar mensajes de paquetes cargados
+    warning: false # No mostrar advertencias
+---
+<b><h3> Análisis Exploratorio Univariado </h3></b>
+
+En esta segunda parte, realizaremos un análisis individual de las variables más importantes o que en primera instancia, podrían resultar como las más relevantes para nuestro estudio. Recordemos que la pregunta a responder de nuestro proyecto es: **¿Cómo puede un streamer, especialmente en sus primeros años, identificar y priorizar las estrategias más efectivas para maximizar su crecimiento y escalar más rápido en Twitch?**
+
+A continuación haremos un análisis en las siguientes variables categóricas:
+
+- LANGUAGE (IDIOMA)
+- MOST_STREAMED_GAME (JUEGO MÁS STREMEADO)
+- MOST_ACTIVE_DAY (DÍA MÁS ACTIVO)
+
+```{r}
+data_proporciones <- data_twitch %>%
+                      count(language) %>%                          
+                       mutate(percentage = n / sum(n) * 100)
+```
+```{r echo=FALSE}
+print(data_proporciones)
+```
+
+
+```{r echo = FALSE, fig.width=10, fig.height=6}
+ggplot(data_proporciones, aes(x = reorder(language, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = -0.5,  
+            size = 3.5) + 
+  labs(title = "Distribución de Idiomas (Top 1000)",
+       x = "Idioma",
+       y = "Frecuencia") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+Podemos ver que el idioma Inglés es el predominante en nuestra base de datos. Sin embargo, el español representa un 10.6% del top 1000 streamers. Probablemente si tomamos una muestra mayor el porcentaje o comportamiento sería similar. Este dato es muy relevante ya que, hablar inglés aumentaría significativamente nuestras posibilidades de que mi amigo sea famoso, pero como su comunidad es de habla hispana, tendremos que enfocarnos directamente en ese "filtro" o bien, recomendar a mi amigo considerar hacer colaboraciones con streamers de habla inglesa. Por ahora nos enfocaremos en analizar las variables que consideramos más importantes, sin tomar en cuenta el idioma pero teniéndolo en cuenta.
+
+Podemos ver los juegos más stremeados nos dan algún indicio de donde está el interés de los espectadores.
+
+```{r}
+top_veinte_juegos <- data_twitch %>% 
+  count(most_streamed_game) %>% 
+     mutate(percentage = n / sum(n) * 100) %>% 
+        arrange(desc(n)) %>% 
+          head(20)
+```
+```{r echo=TRUE}
+print(top_veinte_juegos)
+```
+
+```{r echo = FALSE, fig.width=10, fig.height=6}
+ggplot(top_veinte_juegos, aes(x = reorder(most_streamed_game, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = -0.5,  
+            size = 3.5) + 
+  labs(title = "Juegos más stremeados",
+       x = "Juego",
+       y = "Frecuencia") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+Curiosamente un **25.7%** de los juegos más stremeados es **Just Chatting**, categoría la cual solamente se habla o se hacen actividades que no están relacionadas con un juego en específico. Ya con una diferencia considerable, posteriormente le siguen **League of Legends, GTA V y Valorant**. Como última variable individual categórica, analizaremos el día con mayor actividad.
+
+```{r}
+dias_mas_activos <- data_twitch %>% 
+  count(most_active_day) %>% 
+  mutate(percentage = n / sum(n) * 100) %>% 
+  arrange(desc(n))
+```
+```{r}
+print(dias_mas_activos)
+```
+
+```{r echo=FALSE}
+ggplot(dias_mas_activos, aes(x = reorder(most_active_day, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), 
+            vjust = -0.5,  
+            size = 3.5) + 
+  labs(title = "Días más activos",
+       x = "Día",
+       y = "Cantidad de streamers") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+De esto, podemos inferir que los días intermedios de la semana dominan. Días **Martes, Miércoles y Jueves** concentran una gran parte de las observaciones, representando un 50.3% del total. Esto podría reflejar una tendencia a realizar estas actividades en días laborales.
+
+A continuación analizaremos las variables numéricas:
+
+- AVERAGE_STREAM_DURATION (DURACIÓN PROMEDIO DE STREAM)
+- FOLLOWERS_GAINED_PER_STREAM (SEGUIDORES GANADOS POR STREAM)
+- ACTIVE_DAYS_PER_WEEK (DÍAS ACTIVOS POR SEMANA)
+- TOTAL_TIME_STREAMED (TIEMPO TOTAL STREMEADO)
+- TOTAL_FOLLOWERS (SEGUIDORES TOTALES)
+
+**¿Y porqué analizaremos estas variables?**
+
+Analizar estas métricas nos ayudarán a identificar qué comportamientos y características hacen que los streamers crezcan rápidamente. De esto, podremos tener una idea en cómo afecta la cantidad de tiempo transmitido a la cantidad de seguidores ganados por stream, cuántos días a la semana se necesita estar activo para maximizar el crecimiento o si hay una relación entre la duración del stream y el número de seguidores ganados.
+
+**1) AVERAGE_STREAM_DURATION (DURACIÓN PROMEDIO DE STREAM)**
+```{r}
+summary(data_twitch$average_stream_duration)
+```
+```{r echo=FALSE}
+ggplot(data_twitch, aes(x = average_stream_duration)) +
+  geom_histogram(bins = 30, fill = "purple", color = "black") +
+  labs(title = "Distribución de la Duración Promedio de los Streams",
+       x = "Duración Promedio del Stream (Horas)",
+       y = "Frecuencia")
+```
+**2) FOLLOWERS_GAINED_PER_STREAM (SEGUIDORES GANADOS POR STREAM)**
+```{r}
+summary(data_twitch$followers_gained_per_stream)
+```
+```{r echo=FALSE}
+ggplot(data_twitch, aes(x = followers_gained_per_stream)) +
+  geom_histogram(bins = 30, fill = "purple", color = "black") +
+  labs(title = "Distribución de Seguidores Ganados por Stream",
+       x = "Seguidores Ganados por Stream",
+       y = "Frecuencia")
+```
+**3) ACTIVE_DAYS_PER_WEEK (DÍAS ACTIVOS POR SEMANA)**
+```{r}
+summary(data_twitch$active_days_per_week)
+```
+```{r echo=FALSE}
+ggplot(data_twitch, aes(x = active_days_per_week)) +
+  geom_histogram(binwidth = 1, fill = "purple", color = "black") +
+  scale_x_continuous(breaks = seq(0, 7, by = 1)) +
+  labs(title = "Distribución de días activos por semana (con redondeo)",
+       x = "Promedio de días activos",
+       y = "Cantidad de streamers")
+```
+**4) TOTAL_TIME_STREAMED (TIEMPO TOTAL STREMEADO)**
+```{r}
+summary(data_twitch$total_time_streamed)
+```
+**5) TOTAL_FOLLOWERS (SEGUIDORES TOTALES)**
+```{r}
+summary(data_twitch$total_followers)
+```
+Este análisis univariado y exploratorio inicial nos permite identificar variables clave para ayudar a mi amigo a crecer en Twitch. Las variables categóricas muestran que el idioma, los juegos populares y los días activos pueden influir en la visibilidad. Las variables numéricas nos muestran distribuciones, valores medios y técnicas o comportamientos que utilizan los mejores creadores de contenido en Twitch que serviriían eventualmente a mi amigo, para replicar. 
+
+Si bien, este análisis aún no nos garantiza que el hecho de aumentar la frecuencia de transmisiones o el tiempo total transmitido contribuye al crecimiento del canal, podría darnos la idea de que sí. Por ahora, y de este análisis inicial podemos decir que mi amigo, por el hecho de tener una comunidad de habla hispana tiene que maximizar su visibilidad desde todos los aspectos posibles, ya que en este caso, está en desventaja.
+
+Pero como dijo Nico Massú... <b>NADA ES IMPOSIBLE #"$%@, NI UNA  #%@</b>, así que a continuación exploraremos las variables en conjunto con el filtro del idioma "Español".
+
+
+

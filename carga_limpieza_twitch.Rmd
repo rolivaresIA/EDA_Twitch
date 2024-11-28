@@ -1,0 +1,94 @@
+---
+title: "Análisis exploratorio de datos en Twitch"
+output: html_notebook
+knitr:
+  opts_chunk:
+    echo: true   # Mostrar código
+    message: false # No mostrar mensajes de paquetes cargados
+    warning: false # No mostrar advertencias
+---
+En la última década, las plataformas de streaming han transformado la manera en que consumimos entretenimiento, ofreciendo un medio interactivo y en tiempo real para conectar a creadores con sus audiencias. Entre estas plataformas, **Twitch** se ha consolidado como el líder indiscutible en la transmisión de contenido en vivo, especialmente en el ámbito de los videojuegos. Durante la pandemia, Twitch experimentó un boom de creadores y espectadores, y mi mejor amigo fue uno de ellos. Empezó como un hobby, transmitiendo juegos y creando una pequeña comunidad que, con el tiempo, ha ido creciendo. Aunque aún no es famoso, sueña con vivir de esto y convertirlo en su carrera.
+
+Siempre me ha interesado cómo funciona Twitch, y viendo su esfuerzo diario, decidí ayudarlo. Quiero analizar datos de la plataforma para identificar qué estrategias, comportamientos o patrones pueden hacer que un streamer destaque y crezca más rápido. Mi objetivo es responder a la pregunta: **"¿De qué forma sería más fácil que mi amigo se haga famoso y pueda vivir de Twitch?"** y ofrecerle recomendaciones claras basadas en evidencia.
+
+<b>El siguiente proyecto se dividirá en 3 secciones:</p></b>
+<li>Limpieza y carga de datos
+<li>Análisis exploratorio univariado
+<li>Análisis exploratorio bivariado </li>
+
+<b><h3> Limpieza y Carga de Datos </h3></b>
+
+Como primer paso, debemos instalar los paquetes que utilizaremos en este proyecto:
+
+```{r}
+install.packages(c("readr","tidyverse","dplyr","naniar","knitr","ggcorrplot"))
+```
+
+```{r}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(naniar)
+library(knitr)
+library(ggcorrplot)
+```
+
+```{r, echo=FALSE}
+kable(tabla_descripcion)
+```
+En este proyecto me voy a enfocar en distintas métricas que permitan responder a la pregunta inicial. Estas serán principalmente el **IDIOMA, JUEGOS MÁS STREMEADOS, DÍAS MÁS ACTIVOS, DURACIÓN PROMEDIO DE STREAMS, SEGUIDORES GANADOS POR STREAM**. Si bien esta data representa el TOP 1000 de Streamers en la plataforma, nos da una visión general del comportamiento y/o tendencias para posteriormente, realizar conclusiones propias.
+
+```{r, echo = TRUE}
+data_twitch <- read_csv("dataset/datasetV2.csv")
+```
+
+```{r, echo = TRUE}
+head(data_twitch, 20)
+```
+```{r echo=TRUE}
+miss_var_summary(data_twitch)
+```
+Después de analizar a que corresponde cada variable y que información nos van a dar a lo largo del proyecto, vemos que las "clases" están definidas correctamente.
+
+También se analizan los datos faltantes de nuestra base para decidir que hacer con ellos. En este caso, podemos ver que solo existe una variable con **n_miss** y es la **2ND_MOST_STREAMED_GAME**. Esto tiene sentido, ya que existen streamers que solo se muestran jugando un juego y por ende esta variable quedaría sin información. Para efectos de manipulación de los títulos, los cambiaremos a letras minúsculas y la variable **2ND_MOST_STREAMED_GAME** será modificada solamente por letras.Reemplazaremos los valores faltantes de esta variable por la etiqueta **Sin juego**.
+
+```{r echo=TRUE}
+data_twitch <- rename(data_twitch, SECOND_MOST_STREAMED_GAME = `2ND_MOST_STREAMED_GAME`)
+```
+```{r echo=FALSE}
+print(data_twitch)
+```
+
+```{r echo=TRUE}
+names(data_twitch) <- str_to_lower(names(data_twitch))
+```
+```{r echo=TRUE}
+data_twitch <- data_twitch %>%
+  mutate(second_most_streamed_game = replace_na(second_most_streamed_game, "Sin juego"))
+```
+```{r echo=FALSE}
+print(data_twitch)
+```
+
+Corroboramos que se hayan aplicado los cambios y que ya no tenemos valores faltantes:
+
+```{r echo=TRUE}
+filtro_sin_juego <- data_twitch %>% 
+  filter(second_most_streamed_game == "Sin juego") %>% 
+  group_by(second_most_streamed_game) %>% 
+  summarize(count = n())
+```
+
+```{r echo=FALSE}
+print(filtro_sin_juego)
+```
+```{r echo=TRUE}
+miss_var_summary(data_twitch)
+```
+Finalizando el primer paso del proyecto correspondiente a la limpieza y carga de datos, podemos ver que no tenemos datos faltantes y podrémos iniciar con el análisis exploratorio.
+
+
+
+
+
+
