@@ -6,7 +6,7 @@ En la última década, las plataformas de streaming han revolucionado la forma e
 
 Siempre he sentido curiosidad por entender cómo funciona Twitch, y al ver el esfuerzo constante de mi amigo por destacar, decidí apoyarlo. Este proyecto busca analizar datos de la plataforma para identificar patrones, estrategias y comportamientos que puedan acelerar su crecimiento como streamer. Mi objetivo es responder la pregunta clave: "¿Cómo puede mi amigo aumentar sus posibilidades de ser reconocido y vivir de Twitch?". A través de un análisis detallado, mi intención es brindarle recomendaciones prácticas y basadas en evidencia que lo ayuden a alcanzar sus metas.
 
-![](https://github.com/rolivaresIA/Data_Cleaning_Project/blob/main/Images/datacleaning.png)
+![](https://github.com/rolivaresIA/EDA_Twitch/blob/main/images/Twitch_Main.png)
 
 ## 📋 Descripción del Proyecto 
 
@@ -35,7 +35,7 @@ El objetivo principal es proporcionar una estrategia basada en datos para que mi
 
 - **Fuente de los datos:** Los datos fueron obtenidos de [Kaggle](https://www.kaggle.com/datasets/hibrahimag1/top-1000-twitch-streamers-data-may-2024) en el dataset "Top 1000 Twitch Streamers Data"
 - **Descripción:** El dataset incluye variables como `NAME`, `LANGUAGE`, `MOST_STREAMED_GAME`, `FOLLOWERS_GAINED_PER_STREAM`, `AVG_VIEWERS_PER_STREAM`,`TOTAL_TIME_STREAMED`,`MOST_ACTIVE_DAY`, entra otras. 
-- **Formato:** [1 archivo](https://github.com/rolivaresIA/Data_Cleaning_Project/tree/main/original_databases) .CSV con un total de 999 observaciones y 17 variables.
+- **Formato:** [1 archivo](https://github.com/rolivaresIA/EDA_Twitch/blob/main/dataset/datasetV2.csv) .CSV con un total de 999 observaciones y 17 variables.
 - **Análisis y transformación de valores faltantes en las variables:** Se imputaron o eliminaron valores según su relevancia y distribución.
 - **Filtrado:** A lo largo del proyecto, se define seleccionar únicamente los datos relevantes de la comunidad hispanohablante.
 
