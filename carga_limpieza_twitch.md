@@ -117,10 +117,12 @@ SEGUIDORES GANADOS POR STREAM**. Si bien esta data representa el TOP
 comportamiento y/o tendencias para posteriormente, realizar conclusiones
 propias.
 
+```{r echo=TRUE}
     data_twitch <- read_csv("dataset/datasetV2.csv")
-
+```
+```{r echo=TRUE}
     head(data_twitch, 20)
-
+```
     ## # A tibble: 20 × 17
     ##     RANK NAME             LANGUAGE TYPE   MOST_STREAMED_GAME 2ND_MOST_STREAMED_GA…¹ AVERAGE_STREAM_DURAT…²
     ##    <dbl> <chr>            <chr>    <chr>  <chr>              <chr>                                   <dbl>
