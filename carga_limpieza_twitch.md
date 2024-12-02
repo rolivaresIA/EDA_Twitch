@@ -30,6 +30,19 @@ evidencia.
 Como primer paso, debemos instalar los paquetes que utilizaremos en este
 proyecto:
 
+```{r include=FALSE}
+install.packages(c("readr","tidyverse","dplyr","naniar","knitr","ggcorrplot"))
+```
+
+```{r include=FALSE}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(naniar)
+library(knitr)
+library(ggcorrplot)
+```
+
 <table>
 <thead>
 <tr class="header">
@@ -152,8 +165,9 @@ propias.
     ## #   TOTAL_GAMES_STREAMED <dbl>, ACTIVE_DAYS_PER_WEEK <dbl>, MOST_ACTIVE_DAY <chr>,
     ## #   DAY_WITH_MOST_FOLLOWERS_GAINED <chr>
 
+```{r echo=TRUE}
     miss_var_summary(data_twitch)
-
+```
     ## # A tibble: 17 × 3
     ##    variable                       n_miss pct_miss
     ##    <chr>                           <int>    <num>
@@ -188,9 +202,9 @@ manipulación de los títulos, los cambiaremos a letras minúsculas y la
 variable **2ND\_MOST\_STREAMED\_GAME** será modificada solamente por
 letras.Reemplazaremos los valores faltantes de esta variable por la
 etiqueta **Sin juego**.
-
+```{r echo=TRUE}
     data_twitch <- rename(data_twitch, SECOND_MOST_STREAMED_GAME = `2ND_MOST_STREAMED_GAME`)
-
+```
     ## # A tibble: 999 × 17
     ##     RANK NAME       LANGUAGE TYPE        MOST_STREAMED_GAME  SECOND_MOST_STREAMED…¹ AVERAGE_STREAM_DURAT…²
     ##    <dbl> <chr>      <chr>    <chr>       <chr>               <chr>                                   <dbl>
@@ -210,12 +224,13 @@ etiqueta **Sin juego**.
     ## #   AVG_GAMES_PER_STREAM <dbl>, TOTAL_TIME_STREAMED <dbl>, TOTAL_FOLLOWERS <dbl>, TOTAL_VIEWS <dbl>,
     ## #   TOTAL_GAMES_STREAMED <dbl>, ACTIVE_DAYS_PER_WEEK <dbl>, MOST_ACTIVE_DAY <chr>,
     ## #   DAY_WITH_MOST_FOLLOWERS_GAINED <chr>
-
+```{r echo=TRUE}
     names(data_twitch) <- str_to_lower(names(data_twitch))
-
+```
+```{r echo=TRUE}
     data_twitch <- data_twitch %>%
       mutate(second_most_streamed_game = replace_na(second_most_streamed_game, "Sin juego"))
-
+```
     ## # A tibble: 999 × 17
     ##     rank name       language type        most_streamed_game  second_most_streamed…¹ average_stream_durat…²
     ##    <dbl> <chr>      <chr>    <chr>       <chr>               <chr>                                   <dbl>
@@ -238,19 +253,19 @@ etiqueta **Sin juego**.
 
 Corroboramos que se hayan aplicado los cambios y que ya no tenemos
 valores faltantes:
-
+```{r echo=TRUE}
     filtro_sin_juego <- data_twitch %>% 
       filter(second_most_streamed_game == "Sin juego") %>% 
       group_by(second_most_streamed_game) %>% 
       summarize(count = n())
-
+```
     ## # A tibble: 1 × 2
     ##   second_most_streamed_game count
     ##   <chr>                     <int>
     ## 1 Sin juego                    77
-
+```{r echo=TRUE}
     miss_var_summary(data_twitch)
-
+```
     ## # A tibble: 17 × 3
     ##    variable                       n_miss pct_miss
     ##    <chr>                           <int>    <num>
