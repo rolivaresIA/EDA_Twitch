@@ -38,30 +38,22 @@ A continuación haremos un análisis en las siguientes variables categóricas:
     ## 18 Turkish        7      0.701
     ## 19 Ukrainian      3      0.300
 
-![](plots/analisis_exploratorio_univariado/distribucion_idiomas_twitch.png)
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-3-1.png)
 
-Podemos ver que el idioma Inglés es el predominante en nuestra base de
-datos. Sin embargo, el español representa un 10.6% del top 1000
-streamers. Probablemente si tomamos una muestra mayor el porcentaje o
-comportamiento sería similar. Este dato es muy relevante ya que, hablar
-inglés aumentaría significativamente nuestras posibilidades de que mi
-amigo sea famoso, pero como su comunidad es de habla hispana, tendremos
-que enfocarnos directamente en ese “filtro” o bien, recomendar a mi
-amigo considerar hacer colaboraciones con streamers de habla inglesa.
-Por ahora nos enfocaremos en analizar las variables que consideramos más
-importantes, sin tomar en cuenta el idioma pero teniéndolo en cuenta.
+Podemos ver que el idioma Inglés es el predominante en nuestra base de datos. Sin embargo, el español representa un 10.6% del top 1000 streamers. Probablemente si tomamos una muestra mayor el porcentaje o
+comportamiento sería similar. Este dato es muy relevante ya que, hablar inglés aumentaría significativamente nuestras posibilidades de que mi amigo sea famoso, pero como su comunidad es de habla hispana, tendremos que enfocarnos directamente en ese “filtro” o bien, recomendar a mi amigo considerar hacer colaboraciones con streamers de habla inglesa.
 
-Podemos ver los juegos más stremeados nos dan algún indicio de donde
-está el interés de los espectadores.
-
+Por ahora nos enfocaremos en analizar las variables que consideramos más importantes, sin tomar en cuenta el idioma, pero teniéndolo en cuenta. Podemos ver los juegos más stremeados nos dan algún indicio de donde está el interés de los espectadores.
+```r
     top_veinte_juegos <- data_twitch %>% 
       count(most_streamed_game) %>% 
          mutate(percentage = n / sum(n) * 100) %>% 
             arrange(desc(n)) %>% 
               head(20)
-
+```
+```r
     print(top_veinte_juegos)
-
+```
     ## # A tibble: 20 × 3
     ##    most_streamed_game        n percentage
     ##    <chr>                 <int>      <dbl>
@@ -86,21 +78,19 @@ está el interés de los espectadores.
     ## 19 Street Fighter 6         10       1.00
     ## 20 Teamfight Tactics        10       1.00
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-6-1.png)
-Curiosamente un **25.7%** de los juegos más stremeados es **Just
-Chatting**, categoría la cual solamente se habla o se hacen actividades
-que no están relacionadas con un juego en específico. Ya con una
-diferencia considerable, posteriormente le siguen **League of Legends,
-GTA V y Valorant**. Como última variable individual categórica,
-analizaremos el día con mayor actividad.
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-6-1.png)
 
+Curiosamente un **25.7%** de los juegos más stremeados es **Just Chatting**, categoría la cual solamente se habla o se hacen actividades que no están relacionadas con un juego en específico. Ya con una diferencia considerable, posteriormente le siguen **League of Legends, GTA V y Valorant**. Como última variable individual categórica, analizaremos el día con mayor actividad.
+
+```r
     dias_mas_activos <- data_twitch %>% 
       count(most_active_day) %>% 
       mutate(percentage = n / sum(n) * 100) %>% 
       arrange(desc(n))
-
+```
+```r
     print(dias_mas_activos)
-
+```
     ## # A tibble: 7 × 3
     ##   most_active_day     n percentage
     ##   <chr>           <int>      <dbl>
@@ -112,11 +102,9 @@ analizaremos el día con mayor actividad.
     ## 6 Monday            118       11.8
     ## 7 Friday            117       11.7
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-9-1.png)
-De esto, podemos inferir que los días intermedios de la semana dominan.
-Días **Martes, Miércoles y Jueves** concentran una gran parte de las
-observaciones, representando un 50.3% del total. Esto podría reflejar
-una tendencia a realizar estas actividades en días laborales.
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-9-1.png)
+
+De esto, podemos inferir que los días intermedios de la semana dominan. Días **Martes, Miércoles y Jueves** concentran una gran parte de las observaciones, representando un 50.3% del total. Esto podría reflejar una tendencia a realizar estas actividades en días laborales.
 
 A continuación analizaremos las variables numéricas:
 
@@ -128,66 +116,51 @@ A continuación analizaremos las variables numéricas:
 
 **¿Y porqué analizaremos estas variables?**
 
-Analizar estas métricas nos ayudarán a identificar qué comportamientos y
-características hacen que los streamers crezcan rápidamente. De esto,
-podremos tener una idea en cómo afecta la cantidad de tiempo transmitido
-a la cantidad de seguidores ganados por stream, cuántos días a la semana
-se necesita estar activo para maximizar el crecimiento o si hay una
-relación entre la duración del stream y el número de seguidores ganados.
+Analizar estas métricas nos ayudarán a identificar qué comportamientos y características hacen que los streamers crezcan rápidamente. De esto, podremos tener una idea en cómo afecta la cantidad de tiempo transmitido a la cantidad de seguidores ganados por stream, cuántos días a la semana se necesita estar activo para maximizar el crecimiento o si hay una relación entre la duración del stream y el número de seguidores ganados.
 
 **1) AVERAGE\_STREAM\_DURATION (DURACIÓN PROMEDIO DE STREAM)**
-
+```r
     summary(data_twitch$average_stream_duration)
-
+```
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   1.200   4.200   5.400   5.997   6.900  23.900
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-11-1.png)
+
 **2) FOLLOWERS\_GAINED\_PER\_STREAM (SEGUIDORES GANADOS POR STREAM)**
-
+```r
     summary(data_twitch$followers_gained_per_stream)
-
+```
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   -4240    1360    2450    3383    4832   18889
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-13-1.png)
+
 **3) ACTIVE\_DAYS\_PER\_WEEK (DÍAS ACTIVOS POR SEMANA)**
-
+```r
     summary(data_twitch$active_days_per_week)
-
+```
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##   0.000   2.200   3.800   3.591   5.100   7.000
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-15-1.png)
+![](figuras/figuras_analisis_exploratorio_univariado/unnamed-chunk-15-1.png)
+
 **4) TOTAL\_TIME\_STREAMED (TIEMPO TOTAL STREMEADO)**
-
+```r
     summary(data_twitch$total_time_streamed)
-
+```
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
     ##      27    2066    4756    6505    8871   90920
 
 **5) TOTAL\_FOLLOWERS (SEGUIDORES TOTALES)**
-
+```r
     summary(data_twitch$total_followers)
-
+```
     ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
     ##        0   187500   437000   919403   889500 19000000
 
-Este análisis univariado y exploratorio inicial nos permite identificar
-variables clave para ayudar a mi amigo a crecer en Twitch. Las variables
-categóricas muestran que el idioma, los juegos populares y los días
-activos pueden influir en la visibilidad. Las variables numéricas nos
-muestran distribuciones, valores medios y técnicas o comportamientos que
-utilizan los mejores creadores de contenido en Twitch que serviriían
-eventualmente a mi amigo, para replicar.
+Este análisis univariado y exploratorio inicial nos permite identificar variables clave para ayudar a mi amigo a crecer en Twitch. Las variables categóricas muestran que el idioma, los juegos populares y los días activos pueden influir en la visibilidad. Las variables numéricas nos muestran distribuciones, valores medios y técnicas o comportamientos que utilizan los mejores creadores de contenido en Twitch que serviriían eventualmente a mi amigo, para replicar.
 
-Si bien, este análisis aún no nos garantiza que el hecho de aumentar la
-frecuencia de transmisiones o el tiempo total transmitido contribuye al
-crecimiento del canal, podría darnos la idea de que sí. Por ahora, y de
-este análisis inicial podemos decir que mi amigo, por el hecho de tener
-una comunidad de habla hispana tiene que maximizar su visibilidad desde
-todos los aspectos posibles, ya que en este caso, está en desventaja.
+Si bien, este análisis aún no nos garantiza que el hecho de aumentar la frecuencia de transmisiones o el tiempo total transmitido contribuye al crecimiento del canal, podría darnos la idea de que sí. Por ahora, y de este análisis inicial podemos decir que mi amigo, por el hecho de tener una comunidad de habla hispana tiene que maximizar su visibilidad desde todos los aspectos posibles, ya que en este caso, está en desventaja.
 
-Pero como dijo Nico Massú… <b>NADA ES IMPOSIBLE \#“$%@, NI UNA \#%@</b>,
-así que a continuación exploraremos las variables en conjunto con el
-filtro del idioma”Español”.
+Pero como dijo Nico Massú… **NADA ES IMPOSIBLE \#“$%@, NI UNA \#%@**, así que a continuación exploraremos las variables en conjunto con el filtro del idioma **Español**.
