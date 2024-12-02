@@ -18,7 +18,7 @@ El proyecto utiliza R como herramienta principal para la manipulación de datos 
 2) Análisis exploratorio univariado.
 3) Análisis exploratorio bivariado.
 
-Por lo tanto, la lectura tanto de Notebooks, como Scripts debe ser en ese orden para tener mayor sentido.
+Por lo tanto, la lectura tanto de Notebooks (archivos .md), como Scripts (.R) debe ser en ese orden para tener mayor sentido.
 
 ## 🎯 Ojetivo del Proyecto
 
