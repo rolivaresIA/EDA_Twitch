@@ -1,23 +1,8 @@
-### Análisis exploratorio de datos en Twitch
+# Análisis exploratorio de datos en Twitch
 
-En la última década, las plataformas de streaming han transformado la
-manera en que consumimos entretenimiento, ofreciendo un medio
-interactivo y en tiempo real para conectar a creadores con sus
-audiencias. Entre estas plataformas, **Twitch** se ha consolidado como
-el líder indiscutible en la transmisión de contenido en vivo,
-especialmente en el ámbito de los videojuegos. Durante la pandemia,
-Twitch experimentó un boom de creadores y espectadores, y mi mejor amigo
-fue uno de ellos. Empezó como un hobby, transmitiendo juegos y creando
-una pequeña comunidad que, con el tiempo, ha ido creciendo. Aunque aún
-no es famoso, sueña con vivir de esto y convertirlo en su carrera.
+En la última década, las plataformas de streaming han transformado la manera en que consumimos entretenimiento, ofreciendo un medio interactivo y en tiempo real para conectar a creadores con sus audiencias. Entre estas plataformas, **Twitch** se ha consolidado como el líder indiscutible en la transmisión de contenido en vivo, especialmente en el ámbito de los videojuegos. Durante la pandemia, Twitch experimentó un boom de creadores y espectadores, y mi mejor amigo fue uno de ellos. Empezó como un hobby, transmitiendo juegos y creando una pequeña comunidad que, con el tiempo, ha ido creciendo. Aunque aún no es famoso, sueña con vivir de esto y convertirlo en su carrera.
 
-Siempre me ha interesado cómo funciona Twitch, y viendo su esfuerzo
-diario, decidí ayudarlo. Quiero analizar datos de la plataforma para
-identificar qué estrategias, comportamientos o patrones pueden hacer que
-un streamer destaque y crezca más rápido. Mi objetivo es responder a la
-pregunta: **“¿De qué forma sería más fácil que mi amigo se haga famoso y
-pueda vivir de Twitch?”** y ofrecerle recomendaciones claras basadas en
-evidencia.
+Siempre me ha interesado cómo funciona Twitch, y viendo su esfuerzo diario, decidí ayudarlo. Quiero analizar datos de la plataforma para identificar qué estrategias, comportamientos o patrones pueden hacer que un streamer destaque y crezca más rápido. Mi objetivo es responder a la pregunta: **“¿De qué forma sería más fácil que mi amigo se haga famoso y pueda vivir de Twitch?”** y ofrecerle recomendaciones claras basadas en evidencia.
 
 **El siguiente proyecto se dividirá en 3 secciones:**
 
@@ -25,10 +10,9 @@ evidencia.
 -   Análisis exploratorio univariado
 -   Análisis exploratorio bivariado
 
-### Limpieza y Carga de Datos
+## Limpieza y Carga de Datos
 
-Como primer paso, debemos instalar los paquetes que utilizaremos en este
-proyecto:
+Como primer paso, debemos instalar los paquetes que utilizaremos en este proyecto:
 
 ```r
 install.packages(c("readr","tidyverse","dplyr","naniar","knitr","ggcorrplot"))
@@ -122,13 +106,8 @@ library(ggcorrplot)
 </tbody>
 </table>
 
-En este proyecto me voy a enfocar en distintas métricas que permitan
-responder a la pregunta inicial. Estas serán principalmente el **IDIOMA,
-JUEGOS MÁS STREMEADOS, DÍAS MÁS ACTIVOS, DURACIÓN PROMEDIO DE STREAMS,
-SEGUIDORES GANADOS POR STREAM**. Si bien esta data representa el TOP
-1000 de Streamers en la plataforma, nos da una visión general del
-comportamiento y/o tendencias para posteriormente, realizar conclusiones
-propias.
+En este proyecto me voy a enfocar en distintas métricas que permitan responder a la pregunta inicial. Estas serán principalmente el **IDIOMA, JUEGOS MÁS STREMEADOS, DÍAS MÁS ACTIVOS, DURACIÓN PROMEDIO DE STREAMS,
+SEGUIDORES GANADOS POR STREAM**. Si bien esta data representa el TOP 1000 de Streamers en la plataforma, nos da una visión general del comportamiento y/o tendencias para posteriormente, realizar conclusiones propias.
 
 ```r
     data_twitch <- read_csv("dataset/datasetV2.csv")
@@ -189,19 +168,10 @@ propias.
     ## 16 MOST_ACTIVE_DAY                     0     0   
     ## 17 DAY_WITH_MOST_FOLLOWERS_GAINED      0     0
 
-Después de analizar a que corresponde cada variable y que información
-nos van a dar a lo largo del proyecto, vemos que las “clases” están
-definidas correctamente.
+Después de analizar a que corresponde cada variable y que información nos van a dar a lo largo del proyecto, vemos que las “clases” están definidas correctamente.
 
-También se analizan los datos faltantes de nuestra base para decidir que
-hacer con ellos. En este caso, podemos ver que solo existe una variable
-con **n\_miss** y es la **2ND\_MOST\_STREAMED\_GAME**. Esto tiene
-sentido, ya que existen streamers que solo se muestran jugando un juego
-y por ende esta variable quedaría sin información. Para efectos de
-manipulación de los títulos, los cambiaremos a letras minúsculas y la
-variable **2ND\_MOST\_STREAMED\_GAME** será modificada solamente por
-letras.Reemplazaremos los valores faltantes de esta variable por la
-etiqueta **Sin juego**.
+También se analizan los datos faltantes de nuestra base para decidir que hacer con ellos. En este caso, podemos ver que solo existe una variable con **n\_miss** y es la **2ND\_MOST\_STREAMED\_GAME**. Esto tiene sentido, ya que existen streamers que solo se muestran jugando un juego y por ende esta variable quedaría sin información. Para efectos de manipulación de los títulos, los cambiaremos a letras minúsculas y la variable **2ND\_MOST\_STREAMED\_GAME** será modificada solamente por letras.Reemplazaremos los valores faltantes de esta variable por la etiqueta **Sin juego**.
+
 ```r
     data_twitch <- rename(data_twitch, SECOND_MOST_STREAMED_GAME = `2ND_MOST_STREAMED_GAME`)
 ```
@@ -251,8 +221,8 @@ etiqueta **Sin juego**.
     ## #   total_games_streamed <dbl>, active_days_per_week <dbl>, most_active_day <chr>,
     ## #   day_with_most_followers_gained <chr>
 
-Corroboramos que se hayan aplicado los cambios y que ya no tenemos
-valores faltantes:
+Corroboramos que se hayan aplicado los cambios y que ya no tenemos valores faltantes:
+
 ```r
     filtro_sin_juego <- data_twitch %>% 
       filter(second_most_streamed_game == "Sin juego") %>% 
@@ -287,6 +257,4 @@ valores faltantes:
     ## 16 most_active_day                     0        0
     ## 17 day_with_most_followers_gained      0        0
 
-Finalizando el primer paso del proyecto correspondiente a la limpieza y
-carga de datos, podemos ver que no tenemos datos faltantes y podrémos
-iniciar con el análisis exploratorio.
+Finalizando el primer paso del proyecto correspondiente a la limpieza y carga de datos, podemos ver que no tenemos datos faltantes y podrémos iniciar con el análisis exploratorio.
