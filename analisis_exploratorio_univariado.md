@@ -1,31 +1,20 @@
-<b>
-<h3>
-Análisis Exploratorio Univariado
-</h3>
+## Análisis Exploratorio Univariado
 
-</b>
+En esta segunda parte, realizaremos un análisis individual de las variables más importantes o que en primera instancia, podrían resultar como las más relevantes para nuestro estudio. Recordemos que la pregunta
+a responder de nuestro proyecto es: **¿Cómo puede un streamer, especialmente en sus primeros años, identificar y priorizar las estrategias más efectivas para maximizar su crecimiento y escalar más rápido en Twitch?**
 
-En esta segunda parte, realizaremos un análisis individual de las
-variables más importantes o que en primera instancia, podrían resultar
-como las más relevantes para nuestro estudio. Recordemos que la pregunta
-a responder de nuestro proyecto es: **¿Cómo puede un streamer,
-especialmente en sus primeros años, identificar y priorizar las
-estrategias más efectivas para maximizar su crecimiento y escalar más
-rápido en Twitch?**
-
-A continuación haremos un análisis en las siguientes variables
-categóricas:
+A continuación haremos un análisis en las siguientes variables categóricas:
 
 -   LANGUAGE (IDIOMA)
 -   MOST\_STREAMED\_GAME (JUEGO MÁS STREMEADO)
 -   MOST\_ACTIVE\_DAY (DÍA MÁS ACTIVO)
 
 <!-- -->
-
+```r
     data_proporciones <- data_twitch %>%
                           count(language) %>%                          
                            mutate(percentage = n / sum(n) * 100)
-
+```
     ## # A tibble: 19 × 3
     ##    language       n percentage
     ##    <chr>      <int>      <dbl>
@@ -49,7 +38,7 @@ categóricas:
     ## 18 Turkish        7      0.701
     ## 19 Ukrainian      3      0.300
 
-![](analisis_exploratorio_univariado_files/figure-markdown_strict/unnamed-chunk-3-1.png)
+![](plots/analisis_exploratorio_univariado/distribucion_idiomas_twitch.png)
 
 Podemos ver que el idioma Inglés es el predominante en nuestra base de
 datos. Sin embargo, el español representa un 10.6% del top 1000
