@@ -1,0 +1,165 @@
+# 2. Univariate exploratory analysis
+
+## Univariate exploratory analysis
+
+In this second part we analyse the most relevant variables one at a time. Remember the question of the project: **how can a streamer, especially in the early years, identify and prioritise the strategies that maximise growth on Twitch?**
+
+We start with three categorical variables:
+
+- `language`
+- `most_streamed_game`
+- `most_active_day`
+
+### Language
+
+```{r language-table}
+language_share <- data_twitch %>%
+  count(language) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  arrange(desc(n))
+language_share
+```
+
+```{r language-plot, fig.width=10, fig.height=6}
+ggplot(language_share, aes(x = reorder(language, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  labs(title = "Language distribution (top 1000 streamers)",
+       x = "Language", y = "Number of streamers") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r language-values, include=FALSE}
+pct_english <- language_share$percentage[language_share$language == "English"]
+pct_spanish <- language_share$percentage[language_share$language == "Spanish"]
+```
+
+English dominates the dataset (**`r round(pct_english, 1)`%** of the top 1,000), but Spanish still represents **`r round(pct_spanish, 1)`%**. A larger sample would probably show a similar pattern. This matters: streaming in English would increase the chances of becoming famous, but my friend's community speaks Spanish, so we will focus on that "filter" or, alternatively, recommend collaborations with English-speaking streamers. For now we analyse the main variables on the whole dataset, keeping the language in mind.
+
+### Most streamed games
+
+The most streamed games give a first hint of where viewers' interest is.
+
+```{r top-games}
+top_twenty_games <- data_twitch %>%
+  count(most_streamed_game) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  arrange(desc(n)) %>%
+  head(20)
+top_twenty_games
+```
+
+```{r top-games-plot, fig.width=10, fig.height=6}
+ggplot(top_twenty_games, aes(x = reorder(most_streamed_game, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  labs(title = "Most streamed games (top 20)",
+       x = "Game", y = "Number of streamers") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r games-values, include=FALSE}
+top4 <- top_twenty_games$most_streamed_game[1:4]
+pct_top <- top_twenty_games$percentage[1]
+```
+
+**`r top4[1]`** is the most frequent main category (**`r round(pct_top, 1)`%** of streamers). It is a category where streamers just talk or do activities not tied to a specific game. It is followed, with a considerable gap, by **`r top4[2]`, `r top4[3]` and `r top4[4]`**.
+
+### Most active days
+
+```{r active-days}
+most_active_days <- data_twitch %>%
+  count(most_active_day) %>%
+  mutate(percentage = n / sum(n) * 100) %>%
+  arrange(desc(n))
+most_active_days
+```
+
+```{r active-days-plot, fig.width=8, fig.height=5}
+ggplot(most_active_days, aes(x = reorder(most_active_day, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "purple", color = "black") +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")), vjust = -0.5, size = 3.5) +
+  labs(title = "Most active days", x = "Day", y = "Number of streamers") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r midweek-values, include=FALSE}
+pct_midweek <- sum(most_active_days$percentage[most_active_days$most_active_day %in% c("Tuesday", "Wednesday", "Thursday")])
+```
+
+Mid-week days dominate: **Tuesday, Wednesday and Thursday** together concentrate **`r round(pct_midweek, 1)`%** of the observations. This could reflect a tendency to stream on working days.
+
+Next, the numeric variables:
+
+- `average_stream_duration`
+- `followers_gained_per_stream`
+- `active_days_per_week`
+- `total_time_streamed`
+- `total_followers`
+
+**Why these variables?** They help identify which behaviours and characteristics make streamers grow quickly: how the time streamed relates to followers gained per stream, how many days per week a streamer needs to be active to maximise growth, or whether stream length relates to followers gained.
+
+#### 1) Average stream duration
+
+```{r duration-summary}
+summary(data_twitch$average_stream_duration)
+```
+
+```{r duration-plot, fig.width=8, fig.height=5}
+ggplot(data_twitch, aes(x = average_stream_duration)) +
+  geom_histogram(bins = 30, fill = "purple", color = "black") +
+  labs(title = "Distribution of average stream duration",
+       x = "Average stream duration (hours)", y = "Number of streamers")
+```
+
+#### 2) Followers gained per stream
+
+```{r followers-summary}
+summary(data_twitch$followers_gained_per_stream)
+```
+
+```{r followers-plot, fig.width=8, fig.height=5}
+ggplot(data_twitch, aes(x = followers_gained_per_stream)) +
+  geom_histogram(bins = 30, fill = "purple", color = "black") +
+  labs(title = "Distribution of followers gained per stream",
+       x = "Followers gained per stream", y = "Number of streamers")
+```
+
+```{r followers-values, include=FALSE}
+fg <- data_twitch$followers_gained_per_stream
+n_negative <- sum(fg < 0, na.rm = TRUE)
+```
+
+The distribution is moderately right-skewed: the mean (**`r format(round(mean(fg)), big.mark = ",")`**) is above the median (**`r format(round(median(fg)), big.mark = ",")`**). Note that the variable can be **negative** (`r n_negative` streamers, minimum **`r format(min(fg), big.mark = ",")`**): this is presumably a net change, so a negative value would mean the channel lost followers on average per stream. These records were kept in the analysis (they do not affect the medians used here).
+
+#### 3) Active days per week
+
+```{r active-days-week-summary}
+summary(data_twitch$active_days_per_week)
+```
+
+```{r active-days-week-plot, fig.width=8, fig.height=5}
+ggplot(data_twitch, aes(x = active_days_per_week)) +
+  geom_histogram(binwidth = 1, fill = "purple", color = "black") +
+  scale_x_continuous(breaks = seq(0, 7, by = 1)) +
+  labs(title = "Distribution of active days per week (binned)",
+       x = "Average active days per week", y = "Number of streamers")
+```
+
+#### 4) Total time streamed
+
+```{r total-time-summary}
+summary(data_twitch$total_time_streamed)
+```
+
+#### 5) Total followers
+
+```{r total-followers-summary}
+summary(data_twitch$total_followers)
+```
+
+### Takeaways
+
+This first univariate analysis identifies key variables to help my friend grow on Twitch. The categorical variables show that language, popular games and active days can influence visibility. The numeric variables show distributions, typical values and behaviours of the best creators that could eventually be replicated.
+
+The analysis does not yet guarantee that streaming more often, or for longer, drives channel growth; it only suggests it. Because his community speaks Spanish, he has to maximise visibility in every other aspect, as he starts at a disadvantage. So next we explore the variables again **restricted to Spanish-language streamers**.

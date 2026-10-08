@@ -1,0 +1,91 @@
+# 1. Data loading and cleaning
+
+## Context
+
+Streaming platforms have changed how we consume entertainment, and **Twitch** is the leader in live streaming, especially for video games. A close friend of mine became part of that phenomenon: what began as a hobby, streaming games and building a small community, has slowly grown. He is not famous yet, but he dreams of making a living from it.
+
+I have always been curious about how Twitch works and, seeing his daily effort, I decided to help. The goal of this project is to analyse platform data to find which strategies, behaviours or patterns help a streamer stand out and grow faster. The key question is:
+
+> **How can a streamer, especially in the early years, identify and prioritise the strategies that maximise growth on Twitch?**
+
+The analysis is split into three notebooks:
+
+1. Data loading and cleaning (this notebook)
+2. Univariate exploratory analysis
+3. Bivariate exploratory analysis
+
+## Data loading and cleaning
+
+Required packages: `readr`, `tidyverse`, `naniar`, `knitr`, `RColorBrewer`, `viridis`, `corrplot`.
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(readr)
+library(tidyverse)
+library(naniar)
+library(knitr)
+library(RColorBrewer)
+library(viridis)
+library(corrplot)
+```
+
+The dataset is the Kaggle dataset [Top 1000 Twitch Streamers Data (May 2024)](https://www.kaggle.com/datasets/hibrahimag1/top-1000-twitch-streamers-data-may-2024). Its variables are:
+
+```{r data-dictionary, echo=FALSE}
+data_dictionary <- data.frame(
+  Variable = c("RANK", "NAME", "LANGUAGE", "TYPE", "MOST_STREAMED_GAME",
+               "2ND_MOST_STREAMED_GAME", "AVERAGE_STREAM_DURATION",
+               "FOLLOWERS_GAINED_PER_STREAM", "AVG_VIEWERS_PER_STREAM",
+               "AVG_GAMES_PER_STREAM", "TOTAL_TIME_STREAMED", "TOTAL_FOLLOWERS",
+               "TOTAL_VIEWS", "TOTAL_GAMES_STREAMED", "ACTIVE_DAYS_PER_WEEK",
+               "MOST_ACTIVE_DAY", "DAY_WITH_MOST_FOLLOWERS_GAINED"),
+  Description = c("Streamer ranking", "Streamer nickname",
+                  "Stream language", "Stream type",
+                  "Most streamed game", "Second most streamed game",
+                  "Average stream duration (hours)", "Followers gained per stream",
+                  "Average viewers per stream", "Average number of games per stream",
+                  "Total time streamed (hours)", "Total followers",
+                  "Total views", "Total number of games streamed",
+                  "Active days per week", "Most active day",
+                  "Day with most followers gained"))
+kable(data_dictionary)
+```
+
+I will focus on the metrics that help answer the initial question: **language, most streamed games, most active days, average stream duration and followers gained per stream**. The data represents the top 1,000 streamers on the platform, so it gives a view of the general behaviour and trends that I can then use to draw my own conclusions.
+
+```{r load-data, message=FALSE, warning=FALSE}
+data_twitch <- read_csv("dataset/datasetV2.csv")
+```
+
+```{r head}
+head(data_twitch, 20)
+```
+
+```{r missing-before}
+miss_var_summary(data_twitch)
+```
+
+The dataset has **`r format(nrow(data_twitch), big.mark = ",")` rows and `r ncol(data_twitch)` variables**, and the column types are correctly defined.
+
+Only one variable has missing values (`n_miss`): **2ND_MOST_STREAMED_GAME**. That makes sense: some streamers only ever play one game, so there is no second game. To make the column names easier to work with, I rename `2ND_MOST_STREAMED_GAME` (names starting with a digit are awkward in R), convert all names to lower case, and replace the missing values with the label **No second game**.
+
+```{r rename}
+data_twitch <- rename(data_twitch, SECOND_MOST_STREAMED_GAME = `2ND_MOST_STREAMED_GAME`)
+names(data_twitch) <- str_to_lower(names(data_twitch))
+
+data_twitch <- data_twitch %>%
+  mutate(second_most_streamed_game = replace_na(second_most_streamed_game, "No second game"))
+```
+
+Check that the change was applied:
+
+```{r check-no-game}
+data_twitch %>%
+  filter(second_most_streamed_game == "No second game") %>%
+  summarise(streamers_without_second_game = n())
+```
+
+```{r missing-after}
+miss_var_summary(data_twitch)
+```
+
+There are no missing values left, so the exploratory analysis can start.
